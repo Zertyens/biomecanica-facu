@@ -1,0 +1,90 @@
+clear all
+close all
+clc
+
+[Datos,Archivo]=CargarRegistro();% El llamado a esta función permite cargar el archivo c3d. AHORA tiene la ventaja que los archivos pueden estar en cualquier carpeta del rígido 
+                                       % y no hace falta cambiar de directorio. Este cambio permite conservar la ruta y el nombre del archivo y mantener el directorio actual sin mover.
+                                       % esta función no requiere ningun parámetro de ida y regresa con parámtros:
+                                       % "Datos" donde está toda la estructura del registro y 
+                                       %"Archivo" que es solamente el nombre del archivo que permite ver en el workspace el archivo sobre el que estoy trabajando
+
+%% Velocidad de muestreo y unidades 
+fprintf('Frecuencia: %.2f Hz\n', Datos.Pasada.Marcadores.Crudos.Frecuencia);
+fprintf('Unidades: %s\n', Datos.Pasada.Marcadores.Crudos.Unidades);
+
+%%
+Ciclo = Ciclo2Pasos(Datos);
+% La función "Ciclo2Pasos" Recibe como parámetro la estuctura de "Datos"
+% completa no la modifica, pero si devuelve los parametros convertidos en
+% frame (cuadros) en los que se producen los eventos de apoyo del taón y
+%  despegue de la punta del pie que permiten recortar los datos de cada
+%  ciclo izquierdo y derecho. Además se indica en "DerechaPlataforma1" con
+%  una variable booleana si pisa primero con el pie derecho
+
+Ciclo.AntesHS=10; % es es parametro de cuantos datos antes de el primer contacto del pie 
+% que pisa primero se inicia el recorte de los datos para pasar
+% como parámetro a la función "RecortaDatos"
+Ciclo.DespuesHS=8;
+% es es parametro de cuantos datos despues del segundo contacto del pie 
+% que pisa en  segundo término se inicia el recorte de los datos para pasar
+% como parámetro a la función "RecortaDatos"
+Datos=RecortaDatos(Datos,Ciclo.PrimerFrame-Ciclo.AntesHS,Ciclo.UltimoFrame+Ciclo.DespuesHS);
+% esta función recorta los datos a un paso de ambos pies + la cantidad de
+% datos definidas por "AntesHS" y "DespuesHS" 
+% IMPORTANTE: tener en cuenta que esta escrita con los marcadores
+% organizados en una estructura "Datos.Pasada.Marcadores.Crudos" esto puede
+% haber definido usted que sea otra forma de estructura, debe adaptarla
+
+%% Filtrado de los datos
+fm = Datos.Pasada.Marcadores.Crudos.Frecuencia;
+frec_corte = 10;
+orden = 4;
+
+Datos=Filtrar_Marcadores(Datos,fm,frec_corte,orden);
+% Habia 2 filas de NaN en l_thigh, lo arreglé tomando 2 valores menos en el
+% recorte anterior.
+
+%% Plot comparativo de datos crudos vs filtrados en r_bar_2
+%CrudosVsFiltrados(Datos.Pasada.Marcadores.Filtrados.Valores.r_bar_2, Datos.Pasada.Marcadores.Crudos.Valores.r_bar_2)
+
+%% Extraer datos
+mar = ExtraerMarcadores(Datos.Pasada.Marcadores.Filtrados.Valores);
+ant = ExtraerAntropometria(Datos);
+
+%% Cálculo centros articulares
+[CA, versor] = ObtenerCA(mar, ant, true);
+
+%% Cálculo de los sistemas locales
+% Calcular los SL de muslo, pierna y pie. 
+SL = ObtenerSL(mar, CA);
+
+% SL de pelvis
+SL.i_pelv = versor.w_pelv;
+SL.j_pelv = versor.u_pelv;
+SL.k_pelv = versor.v_pelv;
+
+%% Cálculo de los centros de masa 
+CM = ObtenerCM(mar, CA);
+CM.Pelvis = Datos.Pasada.Marcadores.Filtrados.Valores.sacrum;
+
+%% Graficar i, j, k;
+config.Titulo = 'Sistemas Locales';
+config.Frecuencia = 40;
+config.EscalaVectores = 0.1;
+figure; hold on;
+GraficarSistemasCoordenadas(SL, CM, config);
+hold off;
+
+%% Calcular los ángulos articulares
+AA = ObtenerAA(SL);
+
+%% Graficar los ángulos 
+Graficar_Angulos(AA, Ciclo)
+
+%% Ángulos de euler
+
+
+
+
+
+
