@@ -83,25 +83,36 @@ Graficar_Angulos(AA, Ciclo)
 
 %% Ángulos de euler
 % Pelvis
-AE.pelv = obtenerAE(SL.i_pelv, SL.j_pelv, SL.k_pelv);
+AE.pelvis = ObtenerAE(SL.i_pelv, SL.j_pelv, SL.k_pelv);
 
-% Muslo D
-AE.musloD = obtenerAE(SL.i1, SL.j1, SL.k1);
+% Muslo
+AE.musloD = ObtenerAE(SL.i1, SL.j1, SL.k1);
+AE.musloI = ObtenerAE(SL.i2, SL.j2, SL.k2);
 
-% Muslo I
-AE.musloI = obtenerAE(SL.i2, SL.j2, SL.k2);
+% Pierna 
+AE.piernaD = ObtenerAE(SL.i3, SL.j3, SL.k3);
+AE.piernaI = ObtenerAE(SL.i4, SL.j4, SL.k4);
 
-% Pierna D
-AE.piernaD = obtenerAE(SL.i3, SL.j3, SL.k3);
+% Pie
+AE.pieD = ObtenerAE(SL.i5, SL.j5, SL.k5);
+AE.pieI = ObtenerAE(SL.i6, SL.j6, SL.k6);
 
-% Pierna I
-AE.piernaI = obtenerAE(SL.i4, SL.j4, SL.k4);
+%% Velocidad angular
+% Pelvis
+VA.pelvis = ObtenerVA(AE.pelvis.alpha, AE.pelvis.beta, AE.pelvis.gamma);
 
-% Pie D
-AE.pieD = obtenerAE(SL.i5, SL.j5, SL.k5);
+% Muslo
+VA.musloD = ObtenerVA(AE.musloD.alpha, AE.musloD.beta, AE.musloD.gamma);
+VA.musloI = ObtenerVA(AE.musloI.alpha, AE.musloI.beta, AE.musloI.gamma);
 
-% Pie I
-AE.pieI = obtenerAE(SL.i6, SL.j6, SL.k6);
+% Pierna
+VA.piernaD = ObtenerVA(AE.piernaD.alpha, AE.piernaD.beta, AE.piernaD.gamma);
+VA.piernaI = ObtenerVA(AE.piernaI.alpha, AE.piernaI.beta, AE.piernaI.gamma);
 
+% Pie
+VA.pieD = ObtenerVA(AE.pieD.alpha, AE.pieD.beta, AE.pieD.gamma);
+VA.pieI = ObtenerVA(AE.pieI.alpha, AE.pieI.beta, AE.pieI.gamma);
 
+%% Graficar VA
+Graficar_Velocidades_Angulares(VA, Ciclo)
 

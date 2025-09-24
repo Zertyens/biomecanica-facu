@@ -7,21 +7,21 @@ function [CA, versor] = ObtenerCA(mar, ant, graficar)
     CA.p_RHip = mar.p15 + 0.598 * ant.A2 * versor.u_pelv - 0.344 * ant.A2 * versor.v_pelv - 0.290 * ant.A2 * versor.w_pelv;
     CA.p_LHip = mar.p15 + 0.598 * ant.A2 * versor.u_pelv + 0.344 * ant.A2 * versor.v_pelv - 0.290 * ant.A2 * versor.w_pelv;
     
-    %% Pierna D
+    %% Rodilla D
     versor.v_RCalf = normalize((mar.p3-mar.p5), 2, 'norm');
     versor.u_RCalf = normalize(cross((mar.p4-mar.p5), (mar.p3-mar.p5), 2), 2, 'norm');
     versor.w_RCalf = cross(versor.u_RCalf, versor.v_RCalf, 2);
 
     CA.p_RKnee = mar.p5 + 0.500 * ant.A11 * versor.w_RCalf;
     
-    %% Pierna I
+    %% Rodilla I
     versor.v_LCalf = normalize((mar.p10-mar.p12), 2, 'norm');
     versor.u_LCalf = normalize(cross((mar.p10-mar.p12), (mar.p11-mar.p12), 2), 2, 'norm');
     versor.w_LCalf = cross(versor.u_LCalf, versor.v_LCalf, 2);
 
     CA.p_LKnee = mar.p12 - 0.500 * ant.A12 * versor.w_LCalf;
     
-    %% Pie D
+    %% Tobillo D
     versor.u_RFoot = normalize((mar.p1-mar.p2), 2, 'norm');
     versor.w_RFoot = normalize(cross((mar.p1-mar.p3), (mar.p2-mar.p3), 2), 2, 'norm');
     versor.v_RFoot = cross(versor.w_RFoot, versor.u_RFoot, 2);
@@ -29,7 +29,7 @@ function [CA, versor] = ObtenerCA(mar, ant, graficar)
     CA.p_RAnkle = mar.p3 + 0.016 * ant.A13 * versor.u_RFoot + 0.392 * ant.A15 * versor.v_RFoot + 0.478 * ant.A17 * versor.w_RFoot;
     CA.p_RToe = mar.p3 + 0.742 * ant.A13 * versor.u_RFoot + 1.074 * ant.A15 * versor.v_RFoot - 0.187 * ant.A19 * versor.w_RFoot;
     
-    %% Pie I
+    %% Tobillo I
     versor.u_LFoot = normalize((mar.p8-mar.p9), 2, 'norm');
     versor.w_LFoot = normalize(cross((mar.p8-mar.p10), (mar.p9-mar.p10), 2), 2, 'norm');
     versor.v_LFoot = cross(versor.w_LFoot, versor.u_LFoot, 2);
