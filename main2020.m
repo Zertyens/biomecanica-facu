@@ -82,9 +82,26 @@ AA = ObtenerAA(SL);
 Graficar_Angulos(AA, Ciclo)
 
 %% Ángulos de euler
+% Pelvis
+AE.pelv = obtenerAE(SL.i_pelv, SL.j_pelv, SL.k_pelv);
 
+% Muslo D
+AE.musloD = obtenerAE(SL.i1, SL.j1, SL.k1);
 
+% Muslo I
+AE.musloI = obtenerAE(SL.i2, SL.j2, SL.k2);
 
+% Pierna D
+AE.piernaD = obtenerAE(SL.i3, SL.j3, SL.k3);
+
+% Pierna I
+AE.piernaI = obtenerAE(SL.i4, SL.j4, SL.k4);
+
+% Pie D
+AE.pieD = obtenerAE(SL.i5, SL.j5, SL.k5);
+
+% Pie I
+AE.pieI = obtenerAE(SL.i6, SL.j6, SL.k6);
 
 
 
