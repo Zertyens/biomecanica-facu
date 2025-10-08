@@ -52,7 +52,7 @@ mar = ExtraerMarcadores(Datos.Pasada.Marcadores.Filtrados.Valores);
 ant = ExtraerAntropometria(Datos);
 
 %% Cálculo centros articulares
-[CA, versor] = ObtenerCA(mar, ant, true);
+[CA, versor] = ObtenerCA(mar, ant, false);
 
 %% Cálculo de los sistemas locales
 % Calcular los SL de muslo, pierna y pie. 
@@ -67,13 +67,16 @@ SL.k_pelv = versor.v_pelv;
 CM = ObtenerCM(mar, CA);
 CM.Pelvis = Datos.Pasada.Marcadores.Filtrados.Valores.sacrum;
 
+%% Falta calcular la segunda derivada de los CM.
+CMdd = ObtenerCMdd(CM, fm);
+
 %% Graficar i, j, k;
-config.Titulo = 'Sistemas Locales';
-config.Frecuencia = 40;
-config.EscalaVectores = 0.1;
-figure; hold on;
-GraficarSistemasCoordenadas(SL, CM, config);
-hold off;
+% config.Titulo = 'Sistemas Locales';
+% config.Frecuencia = 40;
+% config.EscalaVectores = 0.1;
+% figure; hold on;
+% GraficarSistemasCoordenadas(SL, CM, config);
+% hold off;
 
 %% Calcular los ángulos articulares
 AA = ObtenerAA(SL);
@@ -99,20 +102,35 @@ AE.pieI = ObtenerAE(SL.i6, SL.j6, SL.k6);
 
 %% Velocidad angular
 % Pelvis
-VA.pelvis = ObtenerVA(AE.pelvis.alpha, AE.pelvis.beta, AE.pelvis.gamma);
+VA.pelvis = ObtenerVA(AE.pelvis.alpha, AE.pelvis.beta, AE.pelvis.gamma, fm);
 
 % Muslo
-VA.musloD = ObtenerVA(AE.musloD.alpha, AE.musloD.beta, AE.musloD.gamma);
-VA.musloI = ObtenerVA(AE.musloI.alpha, AE.musloI.beta, AE.musloI.gamma);
+VA.musloD = ObtenerVA(AE.musloD.alpha, AE.musloD.beta, AE.musloD.gamma, fm);
+VA.musloI = ObtenerVA(AE.musloI.alpha, AE.musloI.beta, AE.musloI.gamma, fm);
 
 % Pierna
-VA.piernaD = ObtenerVA(AE.piernaD.alpha, AE.piernaD.beta, AE.piernaD.gamma);
-VA.piernaI = ObtenerVA(AE.piernaI.alpha, AE.piernaI.beta, AE.piernaI.gamma);
+VA.piernaD = ObtenerVA(AE.piernaD.alpha, AE.piernaD.beta, AE.piernaD.gamma, fm);
+VA.piernaI = ObtenerVA(AE.piernaI.alpha, AE.piernaI.beta, AE.piernaI.gamma, fm);
 
 % Pie
-VA.pieD = ObtenerVA(AE.pieD.alpha, AE.pieD.beta, AE.pieD.gamma);
-VA.pieI = ObtenerVA(AE.pieI.alpha, AE.pieI.beta, AE.pieI.gamma);
+VA.pieD = ObtenerVA(AE.pieD.alpha, AE.pieD.beta, AE.pieD.gamma, fm);
+VA.pieI = ObtenerVA(AE.pieI.alpha, AE.pieI.beta, AE.pieI.gamma, fm);
 
 %% Graficar VA
 Graficar_Velocidades_Angulares(VA, Ciclo)
 
+%% Calculo de las derivadas de VA
+VAd = ObtenerVAd(VA, fm);
+
+%% Calculo de momentos de inercia
+I = ObtenerMI(ant.A1.Valor, Datos.antropometria.ALTURA.Valor);
+
+
+%% La fuerza hay que recortarla antes de usarla, no tiene el vuelo registrado
+% La fuerza es solo cuando está pisando, primero un pie y antes de despegar
+% el otro pie. 
+
+FP = ObtenerFP(Datos, Ciclo);
+
+%Plot para ver si se hizo bien
+PlotFuerzasFP(FP, fm);
