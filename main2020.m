@@ -68,7 +68,7 @@ CM = ObtenerCM(mar, CA);
 CM.Pelvis = Datos.Pasada.Marcadores.Filtrados.Valores.sacrum;
 
 %% Falta calcular la segunda derivada de los CM.
-CMdd = ObtenerCMdd(CM, fm);
+aCM = ObtenerCMdd(CM, fm);
 
 %% Graficar i, j, k;
 % config.Titulo = 'Sistemas Locales';
@@ -120,11 +120,13 @@ VA.pieI = ObtenerVA(AE.pieI.alpha, AE.pieI.beta, AE.pieI.gamma, fm);
 Graficar_Velocidades_Angulares(VA, Ciclo)
 
 %% Calculo de las derivadas de VA
-VAd = ObtenerVAd(VA, fm);
+aA = ObtenerVAd(VA, fm);
 
 %% Calculo de momentos de inercia
 I = ObtenerMI(ant.A1.Valor, Datos.antropometria.ALTURA.Valor);
 
+%% Calculo de las masas de los segmentos
+masas = ObtenerMasas(ant);
 
 %% La fuerza hay que recortarla antes de usarla, no tiene el vuelo registrado
 % La fuerza es solo cuando está pisando, primero un pie y antes de despegar
@@ -134,3 +136,9 @@ FP = ObtenerFP(Datos, Ciclo);
 
 %Plot para ver si se hizo bien
 PlotFuerzasFP(FP, fm);
+
+%% Calcular las fuerzas articulares, ponele
+FA = CalcularFuerzasArticulares(FP, aCM, masas, Ciclo);
+
+%% Graficado de Fuerzas en dirección de ejes anatómicos [N/PesoSujeto]
+GraficarFuerzasArticulares(FA, SL, Datos, Ciclo);
