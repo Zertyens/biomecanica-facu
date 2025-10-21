@@ -27,19 +27,19 @@ function I = ObtenerMI(peso, alt)
     Iii = coefI * [1; peso; alt];
     
     %% Matrices de inercia
-    I.IPie = [
+    I.pie = [
     Iii(1) 0 0; 
     0 Ijj(1) 0;   
     0 0 Ikk(1)
     ] / 100^2;
 
-    I.IPierna = [
+    I.pierna = [
     Iii(2) 0 0; 
     0 Ijj(2) 0;   
     0 0 Ikk(2)
     ] / 100^2;
 
-    I.IMuslo = [
+    I.muslo = [
     Iii(3) 0 0; 
     0 Ijj(3) 0;   
     0 0 Ikk(3)

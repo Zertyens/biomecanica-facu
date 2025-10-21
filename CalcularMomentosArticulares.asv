@@ -1,0 +1,295 @@
+function MA = CalcularMomentosArticulares(FA, FP, CA, CM, I, VA, aA, SL, Ciclo)
+    % CalcularMomentosArticulares - Calcula momentos articulares usando la
+    % forma angular de la Segunda Ley de Newton
+    %
+    % Inputs:
+    %   FA    - Estructura con fuerzas articulares (en coordenadas globales)
+    %   FP    - Estructura con fuerzas de plataforma y CofP
+    %   CA    - Estructura con posiciones de centros articulares
+    %   CM    - Estructura con posiciones de centros de masa de segmentos
+    %   I     - Estructura con momentos de inercia de segmentos
+    %   VA    - Estructura con velocidades angulares de segmentos
+    %   aA    - Estructura con aceleraciones angulares de segmentos
+    %   SL    - Estructura con sistemas locales (vectores unitarios)
+    %   Ciclo - Estructura con información de eventos de marcha
+    %
+    % Output:
+    %   MA - Estructura con momentos articulares en coordenadas globales
+
+    % Número de frames
+    nFrames = size(FA.F_TobilloDerecho, 1);
+    
+    % Inicializar estructura de salida
+    MA = struct();
+    
+    % Ajustar índices de eventos según offset
+    offset = Ciclo.PrimerFrame - Ciclo.AntesHS;
+    RHS1_idx = Ciclo.FrameRHS1 - offset;
+    RTO_idx = Ciclo.FrameRTO - offset;
+    LHS1_idx = Ciclo.FrameLHS1 - offset;
+    LTO_idx = Ciclo.FrameLTO - offset;
+    
+    % Crear vectores lógicos de fase de apoyo
+    apoyoDerecho = false(nFrames, 1);
+    apoyoIzquierdo = false(nFrames, 1);
+    
+    if RHS1_idx > 0 && RTO_idx <= nFrames
+        apoyoDerecho(RHS1_idx:RTO_idx) = true;
+    end
+    if LHS1_idx > 0 && LTO_idx <= nFrames
+        apoyoIzquierdo(LHS1_idx:LTO_idx) = true;
+    end
+    
+    %% ========================================================================
+    %  MIEMBRO INFERIOR DERECHO
+    %  ========================================================================
+    
+    %% 1. TOBILLO DERECHO (Right Ankle)
+    % Segmento: Pie Derecho (Right Foot, segmento 5)
+    
+    % Brazos de momento (Ecuaciones B.88-B.89)
+    p_Prx_5 = CA.p_RAnkle - CM.p_RFoot;  % [nFrames x 3]
+    
+    % Centro de Presión de Plataforma 1
+    p_Plate1 = [FP.P1.CoPx, FP.P1.CoPy, zeros(nFrames, 1)];
+    p_Dis_5 = p_Plate1 - CM.p_RFoot;
+    
+    % Momento de la plataforma (Ecuación B.92)
+    T_Plate1 = [zeros(nFrames, 1), zeros(nFrames, 1), FP.P1.Mz];
+    
+    % Fuerza de reacción del piso (solo en apoyo)
+    F_Plate1 = [FP.P1.Fx .* apoyoDerecho, ...
+                FP.P1.Fy .* apoyoDerecho, ...
+                FP.P1.Fz .* apoyoDerecho];
+    
+    % Momento residual (Ecuación B.91)
+    % M_Res = T_Plate + (p_Prx x F_Ankle) + (p_Dis x F_Plate)
+    M_Res_5 = T_Plate1 + ...
+              productoCruz(p_Prx_5, FA.F_TobilloDerecho) + ...
+              productoCruz(p_Dis_5, F_Plate1);
+    
+    % Tasa de cambio del momento angular (Ecuaciones B.82-B.84)
+    % H_dot = I*alpha + omega x (I*omega)
+    omega_5 = [VA.pieD.wx, VA.pieD.wy, VA.pieD.wz];  % [nFrames x 3]
+    alpha_5 = [aA.pieD.alphax, aA.pieD.alphay, aA.pieD.alphaz];
+    
+    H_dot_5 = calcularHdot(omega_5, alpha_5, I.pieD, SL.i5, SL.j5, SL.k5);
+    
+    % Momento articular en sistema local (Ecuaciones B.93-B.95)
+    % M_ankle_local = H_dot - (i5·M_Res)*i5 - (j5·M_Res)*j5 - (k5·M_Res)*k5
+    M_ankle_x = H_dot_5(:,1) - productoEscalar(SL.i5, M_Res_5);
+    M_ankle_y = H_dot_5(:,2) - productoEscalar(SL.j5, M_Res_5);
+    M_ankle_z = H_dot_5(:,3) - productoEscalar(SL.k5, M_Res_5);
+    
+    % Transformar a sistema global (Ecuación B.96)
+    MA.M_TobilloDerecho = M_ankle_x .* SL.i5 + ...
+                          M_ankle_y .* SL.j5 + ...
+                          M_ankle_z .* SL.k5;
+    
+    %% 2. RODILLA DERECHA (Right Knee)
+    % Segmento: Pierna Derecha (Right Calf, segmento 3)
+    
+    % Brazos de momento (Ecuaciones B.107-B.108)
+    p_Prx_3 = CA.p_RKnee - CM.p_RCalf;
+    p_Dis_3 = CA.p_RAnkle - CM.p_RCalf;
+    
+    % Momento residual (Ecuación B.109)
+    M_Res_3 = -MA.M_TobilloDerecho - ...
+              productoCruz(p_Dis_3, FA.F_TobilloDerecho) + ...
+              productoCruz(p_Prx_3, FA.F_RodillaDerecha);
+    
+    % Tasa de cambio del momento angular
+    omega_3 = [VA.piernaD.wx, VA.piernaD.wy, VA.piernaD.wz];
+    alpha_3 = [aA.piernaD.alphax, aA.piernaD.alphay, aA.piernaD.alphaz];
+    
+    H_dot_3 = calcularHdot(omega_3, alpha_3, I.piernaD, SL.i3, SL.j3, SL.k3);
+    
+    % Momento articular (Ecuaciones B.110-B.112)
+    M_knee_x = H_dot_3(:,1) - productoEscalar(SL.i3, M_Res_3);
+    M_knee_y = H_dot_3(:,2) - productoEscalar(SL.j3, M_Res_3);
+    M_knee_z = H_dot_3(:,3) - productoEscalar(SL.k3, M_Res_3);
+    
+    % Transformar a sistema global (Ecuación B.113)
+    MA.M_RodillaDerecha = M_knee_x .* SL.i3 + ...
+                          M_knee_y .* SL.j3 + ...
+                          M_knee_z .* SL.k3;
+    
+    %% 3. CADERA DERECHA (Right Hip)
+    % Segmento: Muslo Derecho (Right Thigh, segmento 1)
+    
+    % Brazos de momento (Ecuaciones B.123-B.124)
+    p_Prx_1 = CA.p_RHip - CM.p_RThigh;
+    p_Dis_1 = CA.p_RKnee - CM.p_RThigh;
+    
+    % Momento residual (Ecuación B.125)
+    M_Res_1 = -MA.M_RodillaDerecha - ...
+              productoCruz(p_Dis_1, FA.F_RodillaDerecha) + ...
+              productoCruz(p_Prx_1, FA.F_CaderaDerecha);
+    
+    % Tasa de cambio del momento angular
+    omega_1 = [VA.musloD.wx, VA.musloD.wy, VA.musloD.wz];
+    alpha_1 = [aA.musloD.alphax, aA.musloD.alphay, aA.musloD.alphaz];
+    
+    H_dot_1 = calcularHdot(omega_1, alpha_1, I.musloD, SL.i1, SL.j1, SL.k1);
+    
+    % Momento articular (Ecuaciones B.126-B.128)
+    M_hip_x = H_dot_1(:,1) - productoEscalar(SL.i1, M_Res_1);
+    M_hip_y = H_dot_1(:,2) - productoEscalar(SL.j1, M_Res_1);
+    M_hip_z = H_dot_1(:,3) - productoEscalar(SL.k1, M_Res_1);
+    
+    % Transformar a sistema global (Ecuación B.129)
+    MA.M_CaderaDerecha = M_hip_x .* SL.i1 + ...
+                         M_hip_y .* SL.j1 + ...
+                         M_hip_z .* SL.k1;
+    
+    %% ========================================================================
+    %  MIEMBRO INFERIOR IZQUIERDO
+    %  ========================================================================
+    
+    %% 4. TOBILLO IZQUIERDO (Left Ankle)
+    % Segmento: Pie Izquierdo (Left Foot, segmento 6)
+    
+    % Brazos de momento (Ecuaciones B.139-B.140)
+    p_Prx_6 = CA.p_LAnkle - CM.p_LFoot;
+    
+    % Centro de Presión de Plataforma 2
+    p_Plate2 = [FP.P2.CoPx, FP.P2.CoPy, zeros(nFrames, 1)];
+    p_Dis_6 = p_Plate2 - CM.p_LFoot;
+    
+    % Momento de la plataforma (Ecuación B.143)
+    T_Plate2 = [zeros(nFrames, 1), zeros(nFrames, 1), FP.P2.Mz];
+    
+    % Fuerza de reacción del piso (solo en apoyo)
+    F_Plate2 = [FP.P2.Fx .* apoyoIzquierdo, ...
+                FP.P2.Fy .* apoyoIzquierdo, ...
+                FP.P2.Fz .* apoyoIzquierdo];
+    
+    % Momento residual (Ecuación B.142)
+    M_Res_6 = T_Plate2 + ...
+              productoCruz(p_Prx_6, FA.F_TobilloIzquierdo) + ...
+              productoCruz(p_Dis_6, F_Plate2);
+    
+    % Tasa de cambio del momento angular
+    omega_6 = [VA.pieI.wx, VA.pieI.wy, VA.pieI.wz];
+    alpha_6 = [aA.pieI.alphax, aA.pieI.alphay, aA.pieI.alphaz];
+    
+    H_dot_6 = calcularHdot(omega_6, alpha_6, I.pieI, SL.i6, SL.j6, SL.k6);
+    
+    % Momento articular (Ecuaciones B.144-B.146)
+    M_ankle_x = H_dot_6(:,1) - productoEscalar(SL.i6, M_Res_6);
+    M_ankle_y = H_dot_6(:,2) - productoEscalar(SL.j6, M_Res_6);
+    M_ankle_z = H_dot_6(:,3) - productoEscalar(SL.k6, M_Res_6);
+    
+    % Transformar a sistema global (Ecuación B.147)
+    MA.M_TobilloIzquierdo = M_ankle_x .* SL.i6 + ...
+                            M_ankle_y .* SL.j6 + ...
+                            M_ankle_z .* SL.k6;
+    
+    %% 5. RODILLA IZQUIERDA (Left Knee)
+    % Segmento: Pierna Izquierda (Left Calf, segmento 4)
+    
+    % Brazos de momento (Ecuaciones B.157-B.158)
+    p_Prx_4 = CA.p_LKnee - CM.p_LCalf;
+    p_Dis_4 = CA.p_LAnkle - CM.p_LCalf;
+    
+    % Momento residual (Ecuación B.159)
+    M_Res_4 = -MA.M_TobilloIzquierdo - ...
+              productoCruz(p_Dis_4, FA.F_TobilloIzquierdo) + ...
+              productoCruz(p_Prx_4, FA.F_RodillaIzquierda);
+    
+    % Tasa de cambio del momento angular
+    omega_4 = [VA.piernaI.wx, VA.piernaI.wy, VA.piernaI.wz];
+    alpha_4 = [aA.piernaI.alphax, aA.piernaI.alphay, aA.piernaI.alphaz];
+    
+    H_dot_4 = calcularHdot(omega_4, alpha_4, I.piernaI, SL.i4, SL.j4, SL.k4);
+    
+    % Momento articular (Ecuaciones B.160-B.162)
+    M_knee_x = H_dot_4(:,1) - productoEscalar(SL.i4, M_Res_4);
+    M_knee_y = H_dot_4(:,2) - productoEscalar(SL.j4, M_Res_4);
+    M_knee_z = H_dot_4(:,3) - productoEscalar(SL.k4, M_Res_4);
+    
+    % Transformar a sistema global (Ecuación B.163)
+    MA.M_RodillaIzquierda = M_knee_x .* SL.i4 + ...
+                            M_knee_y .* SL.j4 + ...
+                            M_knee_z .* SL.k4;
+    
+    %% 6. CADERA IZQUIERDA (Left Hip)
+    % Segmento: Muslo Izquierdo (Left Thigh, segmento 2)
+    
+    % Brazos de momento (Ecuaciones B.173-B.174)
+    p_Prx_2 = CA.p_LHip - CM.p_LThigh;
+    p_Dis_2 = CA.p_LKnee - CM.p_LThigh;
+    
+    % Momento residual (Ecuación B.175)
+    M_Res_2 = -MA.M_RodillaIzquierda - ...
+              productoCruz(p_Dis_2, FA.F_RodillaIzquierda) + ...
+              productoCruz(p_Prx_2, FA.F_CaderaIzquierda);
+    
+    % Tasa de cambio del momento angular
+    omega_2 = [VA.musloI.wx, VA.musloI.wy, VA.musloI.wz];
+    alpha_2 = [aA.musloI.alphax, aA.musloI.alphay, aA.musloI.alphaz];
+    
+    H_dot_2 = calcularHdot(omega_2, alpha_2, I.musloI, SL.i2, SL.j2, SL.k2);
+    
+    % Momento articular (Ecuaciones B.176-B.178)
+    M_hip_x = H_dot_2(:,1) - productoEscalar(SL.i2, M_Res_2);
+    M_hip_y = H_dot_2(:,2) - productoEscalar(SL.j2, M_Res_2);
+    M_hip_z = H_dot_2(:,3) - productoEscalar(SL.k2, M_Res_2);
+    
+    % Transformar a sistema global (Ecuación B.179)
+    MA.M_CaderaIzquierda = M_hip_x .* SL.i2 + ...
+                           M_hip_y .* SL.j2 + ...
+                           M_hip_z .* SL.k2;
+    
+end
+
+%% ========================================================================
+%  FUNCIONES AUXILIARES (OPERACIONES VECTORIZADAS)
+%  ========================================================================
+
+function resultado = productoCruz(A, B)
+    % Producto cruz vectorizado para matrices [nFrames x 3]
+    % A x B para cada fila
+    resultado = [A(:,2).*B(:,3) - A(:,3).*B(:,2), ...
+                 A(:,3).*B(:,1) - A(:,1).*B(:,3), ...
+                 A(:,1).*B(:,2) - A(:,2).*B(:,1)];
+end
+
+function resultado = productoEscalar(A, B)
+    % Producto punto vectorizado para matrices [nFrames x 3]
+    % A · B para cada fila, retorna vector columna [nFrames x 1]
+    resultado = sum(A .* B, 2);
+end
+
+function H_dot = calcularHdot(omega, alpha, I_mat, i_seg, j_seg, k_seg)
+    % Calcula la tasa de cambio del momento angular (Ecuaciones B.82-B.84)
+    % H_dot = I*alpha + omega x (I*omega)
+    %
+    % Inputs:
+    %   omega  - Velocidades angulares [nFrames x 3] en sistema local
+    %   alpha  - Aceleraciones angulares [nFrames x 3] en sistema local
+    %   I_mat  - Matriz de inercia 3x3 (diagonal)
+    %   i_seg, j_seg, k_seg - Vectores unitarios del sistema local [nFrames x 3]
+    
+    % Extraer componentes de momento de inercia
+    I_xx = I_mat(1,1);
+    I_yy = I_mat(2,2);
+    I_zz = I_mat(3,3);
+    
+    % Componentes de velocidad y aceleración angular
+    wx = omega(:,1);
+    wy = omega(:,2);
+    wz = omega(:,3);
+    
+    alphax = alpha(:,1);
+    alphay = alpha(:,2);
+    alphaz = alpha(:,3);
+    
+    % Ecuaciones B.82-B.84 (forma escalar en sistema local)
+    H_dot_x = I_xx .* alphax + (I_yy - I_zz) .* wz .* wy;
+    H_dot_y = I_yy .* alphay + (I_zz - I_xx) .* wx .* wz;
+    H_dot_z = I_zz .* alphaz + (I_xx - I_yy) .* wy .* wx;
+    
+    % Ensamblar en matriz [nFrames x 3] en el sistema local del segmento
+    H_dot = [H_dot_x, H_dot_y, H_dot_z];
+end

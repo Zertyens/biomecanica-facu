@@ -16,8 +16,8 @@ function FP = ObtenerFP(Datos, Ciclo)
     FP.P1.Mz = P1.Mz1(i_ini:i_fin);
     
     % Centro de Presión Plataforma 1
-    FP.P1.CoPx = P1.CP1x(i_ini:i_fin);
-    FP.P1.CoPy = P1.CP1y(i_ini:i_fin);
+    FP.P1.Cx = P1.CP1x(i_ini:i_fin);
+    FP.P1.Cy = P1.CP1y(i_ini:i_fin);
     
     %% Plataforma 2
     P2 = Datos.Pasada.Fuerzas.Plataforma2.Valores;
@@ -29,10 +29,7 @@ function FP = ObtenerFP(Datos, Ciclo)
     FP.P2.Mz = P2.Mz2(i_ini:i_fin);
     
     % Centro de Presión Plataforma 2
-    FP.P2.CoPx = P2.CP2x(i_ini:i_fin);
-    FP.P2.CoPy = P2.CP2y(i_ini:i_fin);
-    
-    %% Vector gravedad (Z vertical hacia arriba)
-    FP.g = [0; 0; -9.81];
+    FP.P2.Cx = P2.CP2x(i_ini:i_fin);
+    FP.P2.Cy = P2.CP2y(i_ini:i_fin);
     
 end

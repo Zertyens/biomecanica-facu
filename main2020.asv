@@ -143,25 +143,3 @@ FA = ObtenerFA(FP, aCM, masas);
 GraficarFA(FA, SL, Datos, Ciclo)
 
 %% Calculo de H
-H = ObtenerH(I, VA);
-
-%% Derivo H
-Hd = Derivar(H, fm, 1);
-
-%% Matrices de rotación para local a global
-R = ObtenerMatricesRotacion(AE);
-
-%% Hd de sistema local a global
-Hd_global = LocalAGlobal(Hd, R);
-
-%% Calculo de momentos residuales
-MRes = ObtenerMRes(CA, CM, FA, FP, Hd_global);
-
-%% Calculo de Momentos musculares netos Proximales
-MRP = ObtenerMRP(Hd_global, MRes);
-
-%% Pasar de globales a locales
-MRP_local = GlobalALocal(MRP, R);
-
-%% Graficar Momentos musculares netos Proximales
-GraficarMRP(MRP_local, SL, Datos, Ciclo);
