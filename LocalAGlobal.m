@@ -1,19 +1,37 @@
-function M_global = LocalAGlobal(M_local, R)
-    campos = fieldnames(M_local);
+function M_global = LocalAGlobal(M_local, SL)
+% Convierte los vectores en Hd_Local a coordenadas globales usando
+% los sistemas de referencia en SL.
+
+    M_global = struct();
     
-    for i = 1:length(campos)
-        segmento = campos{i};
-        M_loc = M_local.(segmento);  % Nx3
-        R_seg = R.(segmento);         % 3x3xN
+    % --- Mapeo (Asumiendo esta correspondencia) ---
+    mapa = {
+        'musloD',  {'i1', 'j1', 'k1'};
+        'musloI',  {'i2', 'j2', 'k2'};
+        'piernaD', {'i3', 'j3', 'k3'};
+        'piernaI', {'i4', 'j4', 'k4'};
+        'pieD',    {'i5', 'j5', 'k5'};
+        'pieI',    {'i6', 'j6', 'k6'};
+    };
+
+    % --- Cálculo Vectorizado ---
+    for i = 1:size(mapa, 1)
+        campoHd = mapa{i, 1};      % ej. 'musloD'
+        camposSL = mapa{i, 2};     % ej. {'i1', 'j1', 'k1'}
         
-        N = size(M_loc, 1);
-        M_glob = zeros(N, 3);
+        % Extraer los componentes locales (columnas 1, 2, 3)
+        Hx_local = M_local.(campoHd)(:, 1);
+        Hy_local = M_local.(campoHd)(:, 2);
+        Hz_local = M_local.(campoHd)(:, 3);
         
-        % Multiplicación vectorizada por columnas
-        for j = 1:N
-            M_glob(j,:) = M_loc(j,:) * R_seg(:,:,j)';  % (1x3) * (3x3) = (1x3)
-        end
+        % Extraer los vectores base globales
+        i_vec = SL.(camposSL{1});
+        j_vec = SL.(camposSL{2});
+        k_vec = SL.(camposSL{3});
         
-        M_global.(segmento) = M_glob;
+        % Aplicar la transformación de base
+        M_global.(campoHd) = (Hx_local .* i_vec) + ...
+                             (Hy_local .* j_vec) + ...
+                             (Hz_local .* k_vec);
     end
 end

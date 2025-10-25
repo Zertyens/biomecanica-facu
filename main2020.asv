@@ -69,7 +69,7 @@ CM.Pelvis = Datos.Pasada.Marcadores.Filtrados.Valores.sacrum;
 
 %% Falta calcular la segunda derivada de los CM.
 aCM = Derivar(CM, fm, 2, 'a_');
-
+aCM = FiltrarStruct(aCM, fm, frec_corte, Orden);
 %% Graficar i, j, k;
 % config.Titulo = 'Sistemas Locales';
 % config.Frecuencia = 40;
@@ -142,4 +142,17 @@ FA = ObtenerFA(FP, aCM, masas);
 %% Graficado de Fuerzas en dirección de ejes anatómicos [N/PesoSujeto]
 GraficarFA(FA, SL, Datos, Ciclo)
 
-%% Calculo de H
+%% Calcular Hd como dice el libro
+Hd = ObtenerHdLocal(I, VA, aA);
+
+%% Hd de sistema local a global
+Hd_global = LocalAGlobal(Hd, SL);
+
+%% Calculo de Momentos musculares netos Proximales
+MRP = ObtenerMRP(CA, CM, FA, FP, Hd_global);
+
+%% Pasar de globales a locales
+MRP_anat = ObtenerMRP_anat(MRP, SL);
+
+%% Graficar Momentos musculares netos Proximales
+GraficarMRP(MRP_anat, Ciclo, Datos.antropometria.PESO.Valor);

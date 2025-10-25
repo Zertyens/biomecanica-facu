@@ -69,7 +69,7 @@ CM.Pelvis = Datos.Pasada.Marcadores.Filtrados.Valores.sacrum;
 
 %% Falta calcular la segunda derivada de los CM.
 aCM = Derivar(CM, fm, 2, 'a_');
-
+aCM = FiltrarStruct(aCM, fm, 20, orden);
 %% Graficar i, j, k;
 % config.Titulo = 'Sistemas Locales';
 % config.Frecuencia = 40;
@@ -116,11 +116,14 @@ VA.piernaI = ObtenerVA(AE.piernaI.alpha, AE.piernaI.beta, AE.piernaI.gamma, fm);
 VA.pieD = ObtenerVA(AE.pieD.alpha, AE.pieD.beta, AE.pieD.gamma, fm);
 VA.pieI = ObtenerVA(AE.pieI.alpha, AE.pieI.beta, AE.pieI.gamma, fm);
 
+VA = FiltrarStruct(VA, fm, 15, orden);
+
 %% Graficar VA
 GraficarVA(VA, Ciclo)
 
 %% Calculo de las derivadas de VA
 aA = Derivar(VA, fm, 1);
+aA = FiltrarStruct(aA, fm, 20, orden);
 
 %% Calculo de momentos de inercia
 I = ObtenerMI(ant.A1.Valor, Datos.antropometria.ALTURA.Valor);
@@ -132,36 +135,31 @@ masas = ObtenerMasas(ant);
 % La fuerza es solo cuando está pisando, primero un pie y antes de despegar
 % el otro pie. 
 FP = ObtenerFP(Datos, Ciclo);
+FP = FiltrarStruct(FP, fm, frec_corte, orden);
 
 %Plot para ver si se hizo bien
 %PlotFuerzasFP(FP, fm);
 
 %% Calcular las fuerzas articulares
 FA = ObtenerFA(FP, aCM, masas);
+FA = FiltrarStruct(FA, fm, frec_corte, orden);
 
 %% Graficado de Fuerzas en dirección de ejes anatómicos [N/PesoSujeto]
 GraficarFA(FA, SL, Datos, Ciclo)
 
-%% Calculo de H
-H = ObtenerH(I, VA);
-
-%% Derivo H
-Hd = Derivar(H, fm, 1);
-
-%% Matrices de rotación para local a global
-R = ObtenerMatricesRotacion(AE);
+%% Calcular Hd como dice el libro
+Hd = ObtenerHdLocal(I, VA, aA);
 
 %% Hd de sistema local a global
-Hd_global = LocalAGlobal(Hd, R);
-
-%% Calculo de momentos residuales
-MRes = ObtenerMRes(CA, CM, FA, FP, Hd_global);
+Hd_global = LocalAGlobal(Hd, SL);
 
 %% Calculo de Momentos musculares netos Proximales
-MRP = ObtenerMRP(Hd_global, MRes);
+MRP = ObtenerMRP(CA, CM, FA, FP, Hd_global);
 
 %% Pasar de globales a locales
-MRP_local = GlobalALocal(MRP, R);
+MRP_anat = ObtenerMRP_anat(MRP, SL);
+MRP_anat = FiltrarStruct(MRP_anat, fm, frec_corte, orden);
 
 %% Graficar Momentos musculares netos Proximales
-GraficarMRP(MRP_local, SL, Datos, Ciclo);
+GraficarMRP(MRP_anat, Ciclo, Datos.antropometria.PESO.Valor);
+
