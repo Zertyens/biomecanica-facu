@@ -20,6 +20,8 @@ function MRP = ObtenerMRP(CA, CM, FA, FP, Hd_global)
     COP_D = [FP.P2.Cx, FP.P2.Cy, zeros(size(FP.P2.Cx))];
     F_plat_D = [FP.P2.Fx, FP.P2.Fy, FP.P2.Fz];
     T_plat_D = [FP.P2.Mx, FP.P2.My, FP.P2.Mz];
+    %T_plat_D = [zeros(size(FP.P2.Mz)), zeros(size(FP.P2.Mz)), FP.P2.Mz];
+
     
     % Vectores brazo desde el CM del pie
     p_dist_pie_D = COP_D - CM.p_RFoot;        % (p_Dis.5)

@@ -158,8 +158,19 @@ MRP = ObtenerMRP(CA, CM, FA, FP, Hd_global);
 
 %% Pasar de globales a locales
 MRP_anat = ObtenerMRP_anat(MRP, SL);
-MRP_anat = FiltrarStruct(MRP_anat, fm, frec_corte, orden);
+MRP_anat = FiltrarStruct(MRP_anat, fm, 20, orden);
 
 %% Graficar Momentos musculares netos Proximales
 GraficarMRP(MRP_anat, Ciclo, Datos.antropometria.PESO.Valor);
 
+%% Obtener Potencia
+VA_global = LocalAGlobalPelvis(VA, SL);
+
+% Ahora llamamos a ObtenerP con las variables correctas (MRP y VA_global)
+P = ObtenerP(MRP, VA_global, SL);
+
+%Filtramos
+P = FiltrarStruct(P, fm, 20, orden);
+
+%% Graficar Potencia
+GraficarP(P, Ciclo, Datos.antropometria.PESO.Valor);

@@ -5,8 +5,6 @@ function MRP_anat = ObtenerMRP_anat(MR_Global, SL)
     MRP_anat = struct();
 
     % --- Ejes Flotantes (calculados) ---
-    % (Tu "código que funciona" los llama i_r_ajc, i_r_kjc, etc.)
-    
     % Normalizar (vecnorm) evita la división por cero si ya son 0
     function e_norm = normalizar(v)
         normas = vecnorm(v, 2, 2);

@@ -43,6 +43,7 @@ figure('Position', [100, 100, 800, 600]); % Hice la figura un poco más grande
 subplot(3,3,1);
 plot(InterpolaA100Muestras(ciclo_cadera_der(:,1)), 'g', 'LineWidth', 2); % Col 1 = FlexExt
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_cadera_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -57,6 +58,7 @@ xlim([0 100]);
 subplot(3,3,2);
 plot(InterpolaA100Muestras(ciclo_cadera_der(:,2)), 'g', 'LineWidth', 2); % Col 2 = AbdAdd
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_cadera_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -71,6 +73,7 @@ xlim([0 100]);
 subplot(3,3,3);
 plot(InterpolaA100Muestras(ciclo_cadera_der(:,3)), 'g', 'LineWidth', 2); % Col 3 = Rot
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_cadera_izq(:,3)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -87,6 +90,7 @@ xlim([0 100]);
 subplot(3,3,4);
 plot(InterpolaA100Muestras(ciclo_rodilla_der(:,1)), 'g', 'LineWidth', 2); % Col 1 = FlexExt
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_rodilla_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -101,6 +105,7 @@ xlim([0 100]);
 subplot(3,3,5);
 plot(InterpolaA100Muestras(ciclo_rodilla_der(:,2)), 'g', 'LineWidth', 2); % Col 2 = AbdAdd
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_rodilla_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -115,6 +120,7 @@ xlim([0 100]);
 subplot(3,3,6);
 plot(InterpolaA100Muestras(ciclo_rodilla_der(:,3)), 'g', 'LineWidth', 2); % Col 3 = Rot
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_rodilla_izq(:,3)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -131,6 +137,7 @@ xlim([0 100]);
 subplot(3,3,7);
 plot(InterpolaA100Muestras(ciclo_tobillo_der(:,1)), 'g', 'LineWidth', 2); % Col 1 = FlexExt
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_tobillo_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);
@@ -145,6 +152,7 @@ xlim([0 100]);
 subplot(3,3,9);
 plot(InterpolaA100Muestras(ciclo_tobillo_der(:,2)), 'g', 'LineWidth', 2); % Col 2 = AbdAdd
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_tobillo_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'g', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'r', 'LineWidth', 1.5);

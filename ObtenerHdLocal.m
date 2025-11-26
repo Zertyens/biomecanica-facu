@@ -1,6 +1,6 @@
 function Hd = ObtenerHdLocal(I, VA, aA)
-%   Hd = ObtenerHdLocal(I, VA, aA) calcula H_dot basándose en
-%   las ecuaciones de Euler (B.82, B.83, B.84) proporcionadas.
+%   Hd = ObtenerHdLocal(I, VA, aA) calcula H_dot con base en
+%   las ecuaciones de Euler (B.82, B.83, B.84).
 %
 %   Entradas:
 %     VA - Estructura con campos de velocidad angular (N x 3).
@@ -18,8 +18,7 @@ function Hd = ObtenerHdLocal(I, VA, aA)
     segmentosBase = {'muslo', 'pierna', 'pie'};
     lados = {'D', 'I'}; % Derecho e Izquierdo
     
-    % Iterar sobre cada segmento y lado (esto es para los campos del struct,
-    % el cálculo interno es vectorizado).
+    % Iterar sobre cada segmento y lado.
     for s = 1:length(segmentosBase)
         for l = 1:length(lados)
             
@@ -43,7 +42,7 @@ function Hd = ObtenerHdLocal(I, VA, aA)
             % --- Mapeo Crucial de Inercias ---
             % Se crea un vector 1x3 de inercias principales (Ix, Iy, Iz)
             % basándonos en la asignación de las ecuaciones B.82-B.84 y
-            % tu definición de Iii, Ijj, Ikk.
+            % la definición de Iii, Ijj, Ikk.
             %
             % Eq. B.82 (Eje x) usa I_IntExt -> Iii -> I(1,1)
             % Eq. B.83 (Eje y) usa I_FlxExt -> Ikk -> I(3,3)
@@ -55,15 +54,13 @@ function Hd = ObtenerHdLocal(I, VA, aA)
             % H = I * omega_dot + cross(omega, I * omega)
             
             % Término 1: I * omega_dot
-            % (Multiplicación elemento a elemento usando broadcasting)
-            termino_aceleracion = omega_dot .* I_vec;
+            termino_aceleracion = I_vec .* omega_dot ;
             
             % Término 2: cross(omega, I * omega)
             % Primero calculamos (I * omega)
-            I_omega = omega .* I_vec;
+            I_omega = I_vec .* omega;
             
-            % Luego el producto cruz giroscópico
-            % cross(A, B, 2) calcula el producto cruz fila por fila
+            % Luego el producto cruz
             termino_giroscopico = cross(omega, I_omega, 2);
             
             % Resultado final para este segmento

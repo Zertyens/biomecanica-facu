@@ -114,7 +114,7 @@ function GraficarFA(FA, SL, Datos, Ciclo)
 	
 	% Etiquetas (Unidades cambiadas a N/kg)
 	titulos = {'Fuerza Cadera', 'Fuerza Rodilla', 'Fuerza Tobillo'}; % Filas
-	ylabels = {'Lateral(-)/Medial(+) [N/kg]', 'Post(+)/Ant(-) [N/kg]', 'Distal(-)/Prox(+) [N/kg]'}; % Columnas
+	ylabels = {'Lateral(-)/Medial(+) [N/kg]', 'Post(-)/Ant(+) [N/kg]', 'Distal(-)/Prox(+) [N/kg]'}; % Columnas
 	
 	%% Crear figura con 9 subplots
 	
@@ -127,7 +127,7 @@ function GraficarFA(FA, SL, Datos, Ciclo)
 			
 			subplot(3, 3, plot_idx);
 			hold on; grid on;
-			
+			yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 			% Graficar datos
 			plot(porcentaje_derecho, data_R{fila, col}, 'Color', 'g', 'LineWidth', 1.5);
 			plot(porcentaje_izquierdo, data_L{fila, col}, 'Color', 'r', 'LineWidth', 1.5);

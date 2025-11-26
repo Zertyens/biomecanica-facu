@@ -1,4 +1,27 @@
 function FA = ObtenerFA(FP, aCM, masas)
+% FA = ObtenerFA(FP, aCM, masas) calcula las Fuerzas de Reacción Articular
+% (FA) en el tobillo, rodilla y cadera utilizando un método de
+% Dinámica Inversa (bottom-up).
+%
+% La función aplica la 2da Ley de Newton (Sumatoria de Fuerzas = m * a)
+% para cada segmento, despejando la fuerza proximal desconocida.
+%
+% Entradas:
+%   FP    - Estructura con datos de la Plataforma de Fuerza (Fuerzas Externas).
+%           Debe contener FP.P1 y FP.P2 con campos .Fx, .Fy, .Fz (N x 1).
+%   aCM   - Estructura con la aceleración lineal (N x 3) del centro de masa
+%           de cada segmento (ej. aCM.a_p_RFoot).
+%   masas - Estructura con los valores escalares de la masa de cada
+%           segmento en KILOGRAMOS (ej. masas.pieD).
+%
+% Salida:
+%   FA    - Estructura con las fuerzas de reacción articular (proximales)
+%           expresadas en NEWTONS en el sistema de coordenadas global.
+%           FA.tobillo_D, FA.tobillo_I: Fuerza proximal del pie (N x 3).
+%           FA.rodilla_D, FA.rodilla_I: Fuerza proximal de la pierna (N x 3).
+%           FA.cadera_D,  FA.cadera_I:  Fuerza proximal del muslo (N x 3).
+%
+
 	fuerza_externa_d = [FP.P2.Fx, FP.P2.Fy, FP.P2.Fz];
     fuerza_externa_i = [FP.P1.Fx, FP.P1.Fy, FP.P1.Fz];
 
@@ -15,6 +38,7 @@ end
 function f_proximal = calcular_fuerza_proximal(masa_seg, a_seg, f_distal, f_externa)
 
 a_gravedad = zeros(533,3);
+a_gravedad(:,3) = -9.8;
 
-f_proximal = masa_seg * a_seg - f_distal - f_externa;
+f_proximal = masa_seg * a_seg - f_distal - f_externa - masa_seg * a_gravedad;
 end

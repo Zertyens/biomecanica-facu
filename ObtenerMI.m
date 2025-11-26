@@ -1,4 +1,24 @@
 function I = ObtenerMI(peso, alt)
+% I = ObtenerMI(peso, alt) estima el tensor de inercia para los
+% segmentos del miembro inferior (pie, pierna, muslo) basado en
+% ecuaciones de regresión antropométrica (Zatsiorsky).
+%
+% La función calcula los momentos de inercia principales (Iii, Ijj, Ikk)
+% y los ensambla en matrices diagonales.
+%
+% Entradas:
+%   peso - Escalar. Masa total del sujeto en KILOGRAMOS (kg).
+%   alt  - Escalar. Altura total del sujeto en METROS (m).
+%
+% Salida:
+%   I    - Estructura con las matrices (tensores) de inercia para cada
+%          segmento, expresadas en los ejes principales del segmento.
+%          Las unidades están en KILOGRAMO-METRO CUADRADO (kg·m^2).
+%          I.pie:    Matriz (3 x 3) de inercia del pie.
+%          I.pierna: Matriz (3 x 3) de inercia de la pierna.
+%          I.muslo:  Matriz (3 x 3) de inercia del muslo.
+%
+
     % Obtener Ijj - EJE ANTERO-POSTERIOR (PERPENDICULAR AL PLANO FRONTAL)
     coefJ = [
     -100     0.480   0.626;    % Pie
@@ -31,7 +51,7 @@ function I = ObtenerMI(peso, alt)
     Iii(1) 0 0; 
     0 Ijj(1) 0;  
     0 0 Ikk(1)
-    ] / 100^2;
+    ] / 100^2; % para kg · m^2
 
     I.pierna = [
     Iii(2) 0 0; 

@@ -35,6 +35,7 @@ figure('Position', [100, 100, 600, 400]);
 subplot(3,3,1);
 plot(InterpolaA100Muestras(ciclo_muslo_der(:,1)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_muslo_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -49,6 +50,7 @@ xlim([0 100]);
 subplot(3,3,2);
 plot(InterpolaA100Muestras(ciclo_muslo_der(:,2)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_muslo_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -63,6 +65,7 @@ xlim([0 100]);
 subplot(3,3,3);
 plot(InterpolaA100Muestras(ciclo_muslo_der(:,3)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_muslo_izq(:,3)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -78,6 +81,7 @@ xlim([0 100]);
 subplot(3,3,4);
 plot(InterpolaA100Muestras(ciclo_pierna_der(:,1)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pierna_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -92,6 +96,7 @@ xlim([0 100]);
 subplot(3,3,5);
 plot(InterpolaA100Muestras(ciclo_pierna_der(:,2)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pierna_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -106,6 +111,7 @@ xlim([0 100]);
 subplot(3,3,6);
 plot(InterpolaA100Muestras(ciclo_pierna_der(:,3)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pierna_izq(:,3)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -121,6 +127,7 @@ xlim([0 100]);
 subplot(3,3,7);
 plot(InterpolaA100Muestras(ciclo_pie_der(:,1)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pie_izq(:,1)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -135,6 +142,7 @@ xlim([0 100]);
 subplot(3,3,8);
 plot(InterpolaA100Muestras(ciclo_pie_der(:,2)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pie_izq(:,2)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
@@ -149,6 +157,7 @@ xlim([0 100]);
 subplot(3,3,9);
 plot(InterpolaA100Muestras(ciclo_pie_der(:,3)), 'g', 'LineWidth', 2);
 hold on;
+yline(0, 'Color', 'k', 'LineWidth', 1.2);   % línea 0
 plot(InterpolaA100Muestras(ciclo_pie_izq(:,3)), 'r', 'LineWidth', 2);
 line([x_RTO x_RTO], ylim, 'LineStyle', '--', 'Color', 'red', 'LineWidth', 1.5);
 line([x_LTO x_LTO], ylim, 'LineStyle', '--', 'Color', 'green', 'LineWidth', 1.5);
